@@ -1,5 +1,5 @@
+
 import { useState } from "react";
-import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
 
 export default function RegisterPage() {
@@ -10,7 +10,7 @@ export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
 
-    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    function handleSubmit(event) {
         event.preventDefault();
         setError("");
 

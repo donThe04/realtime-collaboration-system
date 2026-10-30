@@ -1,5 +1,5 @@
+
 import { useState } from "react";
-import type { FormEvent } from "react";
 import { Link } from "react-router-dom";
 
 export default function LoginPage() {
@@ -8,7 +8,7 @@ export default function LoginPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
 
-    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    function handleSubmit(event) {
         event.preventDefault();
     }
 
@@ -16,8 +16,6 @@ export default function LoginPage() {
         <main className="flex min-h-screen items-center justify-center bg-white px-4 py-10">
             <section className="w-full max-w-md">
                 <div className="mb-8 text-center">
-
-
                     <h1 className="text-3xl font-bold tracking-tight text-slate-950">
                         Đăng nhập
                     </h1>
