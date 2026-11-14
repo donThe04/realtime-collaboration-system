@@ -1,7 +1,19 @@
 
+import { NavLink } from "react-router-dom";
+
+const navItems = [
+    { to: "/dashboard", label: "Dashboard", icon: "⌂", end: true },
+    { to: "/workspaces", label: "Workspaces", icon: "▣" },
+    { to: "/documents", label: "Documents", icon: "▤" },
+    { to: "/kanban", label: "Kanban Board", icon: "▦" },
+    { to: "/whiteboard", label: "Whiteboard", icon: "✎" },
+    { to: "/messages", label: "Messages", icon: "☏" },
+    { to: "/history", label: "Session History", icon: "◷" },
+];
+
 const Sidebar = () => {
     return (
-        <aside className="flex min-h-screen w-[250px] flex-col border-r border-slate-200 bg-white px-4 py-6">
+        <aside className="sticky top-0 flex h-screen w-[250px] shrink-0 flex-col border-r border-slate-200 bg-white px-4 py-6">
 
             {/* Logo */}
             <div className="mb-10 flex items-center gap-3 px-2">
@@ -14,108 +26,72 @@ const Sidebar = () => {
                 </span>
             </div>
 
-            {/* Main menu */}
+            {/* Navigation */}
             <div>
                 <p className="mb-3 px-3 text-xs font-bold tracking-wider text-slate-400">
-                    MENU
+                    WORKSPACE
                 </p>
 
                 <nav className="flex flex-col gap-1">
+                    {navItems.map((item) => (
+                        <NavLink
+                            key={item.to}
+                            to={item.to}
+                            end={item.end}
+                            className={({ isActive }) =>
+                                `flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition ${
+                                    isActive
+                                        ? "bg-indigo-50 text-indigo-600"
+                                        : "text-slate-600 hover:bg-slate-100 hover:text-indigo-600"
+                                }`
+                            }
+                        >
+                            <span className="w-6 text-center text-lg">
+                                {item.icon}
+                            </span>
 
-                    <a
-                        href="/dashboard"
-                        className="flex items-center gap-3 rounded-lg bg-indigo-50 px-3 py-3 text-sm font-semibold text-indigo-600"
-                    >
-                        <span className="text-lg">⌂</span>
-                        Dashboard
-                    </a>
-
-                    <a
-                        href="#"
-                        className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-indigo-600"
-                    >
-                        <span className="text-lg">▣</span>
-                        Workspaces
-                    </a>
-
-                    <a
-                        href="#"
-                        className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-indigo-600"
-                    >
-                        <span className="text-lg">▤</span>
-                        Documents
-                    </a>
-
-                    <a
-                        href="#"
-                        className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-indigo-600"
-                    >
-                        <span className="text-lg">▦</span>
-                        Kanban Board
-                    </a>
-
-                    <a
-                        href="#"
-                        className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-indigo-600"
-                    >
-                        <span className="text-lg">✎</span>
-                        Whiteboard
-                    </a>
-
-                    <a
-                        href="#"
-                        className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-indigo-600"
-                    >
-                        <span className="text-lg">☏</span>
-                        Messages
-                    </a>
-
-                    <a
-                        href="#"
-                        className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100 hover:text-indigo-600"
-                    >
-                        <span className="text-lg">◷</span>
-                        Session History
-                    </a>
-
+                            {item.label}
+                        </NavLink>
+                    ))}
                 </nav>
             </div>
 
-            {/* Bottom menu */}
+            {/* Bottom */}
             <div className="mt-auto">
-
-                <a
-                    href="#"
-                    className="flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium text-slate-600 transition hover:bg-slate-100"
+                <NavLink
+                    to="/settings"
+                    className={({ isActive }) =>
+                        `flex items-center gap-3 rounded-lg px-3 py-3 text-sm font-medium transition ${
+                            isActive
+                                ? "bg-indigo-50 text-indigo-600"
+                                : "text-slate-600 hover:bg-slate-100"
+                        }`
+                    }
                 >
-                    <span className="text-lg">⚙</span>
+                    <span className="w-6 text-center text-lg">⚙</span>
                     Settings
-                </a>
+                </NavLink>
 
-                {/* User profile */}
+                {/* Profile */}
                 <div className="mt-5 flex items-center gap-3 border-t border-slate-200 px-2 pt-5">
-
                     <div className="flex h-10 w-10 items-center justify-center rounded-full bg-violet-100 font-bold text-violet-700">
                         N
                     </div>
 
-                    <div className="flex flex-1 flex-col">
-                        <span className="text-sm font-semibold text-slate-800">
+                    <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-semibold text-slate-800">
                             Nguyen User
-                        </span>
-
-                        <span className="text-xs text-slate-400">
-                            Free Plan
-                        </span>
+                        </p>
+                        <p className="text-xs text-slate-400">
+                            Workspace Member
+                        </p>
                     </div>
 
-                    <span className="cursor-pointer text-xl text-slate-500">
+                    <button type="button" className="text-xl text-slate-400">
                         ⋯
-                    </span>
-
+                    </button>
                 </div>
             </div>
-
         </aside>
     );
 };
