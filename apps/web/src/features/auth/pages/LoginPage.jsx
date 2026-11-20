@@ -1,6 +1,6 @@
-
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { loginUser } from "../../../services/auth.service";
 
 export default function LoginPage() {
     const navigate = useNavigate();
@@ -19,26 +19,17 @@ export default function LoginPage() {
         setIsLoading(true);
 
         try {
-            const response = await fetch(
-                "http://localhost:5000/api/auth/login",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        email: email.trim(),
-                        password,
-                    }),
-                }
-            );
 
-            const data = await response.json();
+            const result = await loginUser({
+                email: email.trim(),
+                password,
+            });
+            // Lưu JWT Token
+            const storage = rememberMe ? localStorage : sessionStorage;
 
-            if (!response.ok) {
-                throw new Error(data.message || "Đăng nhập thất bại.");
-            }
+            storage.setItem("accessToken", result.token);
 
+            // Chuyển đến Dashboard
             navigate("/dashboard");
 
         } catch (error) {
