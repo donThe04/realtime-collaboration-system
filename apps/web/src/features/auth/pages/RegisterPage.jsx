@@ -1,6 +1,7 @@
 
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import { registerUser } from "../../../services/auth.service";
 
 export default function RegisterPage() {
     const [isLoading, setIsLoading] = useState(false);
@@ -38,32 +39,13 @@ export default function RegisterPage() {
 
             console.log("1. Bắt đầu đăng ký tài khoản");
 
-            const response = await fetch(
-                "http://localhost:5000/api/auth/register",
-                {
-                    method: "POST",
-                    headers: {
-                        "Content-Type": "application/json",
-                    },
-                    body: JSON.stringify({
-                        name: name.trim(),
-                        email: email.trim(),
-                        password: password,
-                    }),
-                }
-            );
-
-            console.log("2. Backend đã phản hồi");
-
-            const data = await response.json();
+            const data = await registerUser({
+                username: name.trim(),
+                email: email.trim(),
+                password: password,
+            });
 
             console.log("3. Dữ liệu nhận được:", data);
-
-            if (!response.ok) {
-                throw new Error(
-                    data.message || "Đăng ký tài khoản thất bại."
-                );
-            }
 
             setSuccessMessage(
                 data.message || "Đăng ký tài khoản thành công!"
