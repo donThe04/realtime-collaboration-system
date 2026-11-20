@@ -1,15 +1,62 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function LoginPage() {
+    const navigate = useNavigate();
+
+    const [isLoading, setIsLoading] = useState(false);
+    const [errorMessage, setErrorMessage] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [showPassword, setShowPassword] = useState(false);
     const [rememberMe, setRememberMe] = useState(false);
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
+
+        setErrorMessage("");
+        setIsLoading(true);
+
+        try {
+            const response = await fetch(
+                "http://localhost:5000/api/auth/login",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        email: email.trim(),
+                        password,
+                    }),
+                }
+            );
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(data.message || "Đăng nhập thất bại.");
+            }
+
+            navigate("/dashboard");
+
+        } catch (error) {
+            console.error("Lỗi đăng nhập:", error);
+
+            if (error instanceof TypeError) {
+                setErrorMessage(
+                    "Không thể kết nối đến máy chủ. Vui lòng thử lại."
+                );
+            } else {
+                setErrorMessage(
+                    error.message || "Đã xảy ra lỗi khi đăng nhập."
+                );
+            }
+
+        } finally {
+            setIsLoading(false);
+        }
     }
 
     return (
@@ -55,13 +102,12 @@ export default function LoginPage() {
                             >
                                 Mật khẩu
                             </label>
-
-                            <button
-                                type="button"
+                            <Link
+                                to="/forgot-password"
                                 className="text-sm text-indigo-600 hover:text-indigo-800"
                             >
                                 Quên mật khẩu?
-                            </button>
+                            </Link>
                         </div>
 
                         <div className="relative">
@@ -96,13 +142,21 @@ export default function LoginPage() {
                         />
                         Ghi nhớ đăng nhập
                     </label>
-
+                    {errorMessage && (
+                        <p
+                            role="alert"
+                            className="rounded-xl border border-red-200 bg-red-50 p-3 text-sm text-red-600"
+                        >
+                            {errorMessage}
+                        </p>
+                    )}
                     <button
                         type="submit"
-                        className="flex h-[54px] w-full items-center justify-center gap-3 rounded-xl bg-indigo-600 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-700 active:scale-[0.99]"
+                        disabled={isLoading}
+                        className="flex h-[54px] w-full items-center justify-center gap-3 rounded-xl bg-indigo-600 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        Đăng nhập
-                        <span className="text-lg">→</span>
+                        {isLoading ? "Đang đăng nhập..." : "Đăng nhập"}
+                        {!isLoading && <span className="text-lg">→</span>}
                     </button>
                 </form>
 

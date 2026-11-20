@@ -1,8 +1,10 @@
 
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 export default function RegisterPage() {
+    const [isLoading, setIsLoading] = useState(false);
+    const [successMessage, setSuccessMessage] = useState("");
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
@@ -10,9 +12,16 @@ export default function RegisterPage() {
     const [showPassword, setShowPassword] = useState(false);
     const [error, setError] = useState("");
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
         event.preventDefault();
+
         setError("");
+        setSuccessMessage("");
+
+        if (name.trim().length === 0) {
+            setError("Vui lòng nhập họ và tên.");
+            return;
+        }
 
         if (password.length < 8) {
             setError("Mật khẩu phải có ít nhất 8 ký tự.");
@@ -22,6 +31,64 @@ export default function RegisterPage() {
         if (password !== confirmPassword) {
             setError("Mật khẩu xác nhận không khớp.");
             return;
+        }
+
+        try {
+            setIsLoading(true);
+
+            console.log("1. Bắt đầu đăng ký tài khoản");
+
+            const response = await fetch(
+                "http://localhost:5000/api/auth/register",
+                {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        name: name.trim(),
+                        email: email.trim(),
+                        password: password,
+                    }),
+                }
+            );
+
+            console.log("2. Backend đã phản hồi");
+
+            const data = await response.json();
+
+            console.log("3. Dữ liệu nhận được:", data);
+
+            if (!response.ok) {
+                throw new Error(
+                    data.message || "Đăng ký tài khoản thất bại."
+                );
+            }
+
+            setSuccessMessage(
+                data.message || "Đăng ký tài khoản thành công!"
+            );
+
+            console.log("4. Đăng ký thành công");
+
+            setName("");
+            setEmail("");
+            setPassword("");
+            setConfirmPassword("");
+
+        } catch (error) {
+            console.error("Lỗi đăng ký:", error);
+
+            if (error instanceof TypeError) {
+                setError("Không thể kết nối đến máy chủ. Vui lòng thử lại.");
+            } else {
+                setError(error.message || "Đã xảy ra lỗi khi đăng ký.");
+            }
+
+        } finally {
+            setIsLoading(false);
+
+            console.log("5. Kết thúc quá trình đăng ký");
         }
     }
 
@@ -146,13 +213,21 @@ export default function RegisterPage() {
                             {error}
                         </p>
                     )}
-
+                    {successMessage && (
+                        <p
+                            role="status"
+                            className="rounded-xl border border-green-200 bg-green-50 p-3 text-sm text-green-700"
+                        >
+                            {successMessage}
+                        </p>
+                    )}
                     <button
                         type="submit"
-                        className="flex h-[52px] w-full items-center justify-center gap-3 rounded-xl bg-indigo-600 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-700 active:scale-[0.99]"
+                        disabled={isLoading}
+                        className="flex h-[52px] w-full items-center justify-center gap-3 rounded-xl bg-indigo-600 text-sm font-bold text-white shadow-lg shadow-indigo-500/25 transition hover:bg-indigo-700 disabled:cursor-not-allowed disabled:opacity-60"
                     >
-                        Tạo tài khoản
-                        <span className="text-lg">→</span>
+                        {isLoading ? "Đang tạo tài khoản..." : "Tạo tài khoản"}
+                        {!isLoading && <span className="text-lg">→</span>}
                     </button>
                 </form>
 
